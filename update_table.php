@@ -42,25 +42,20 @@ $result = mysqli_fetch_assoc($data);
 
     
     <form class="row g-3" action="#" method="POST">
+    
+<!-- hidden input - Carries the current user's ID -->
+    <input type="hidden" name="id" value="<?php echo $id; ?>">
+
 <!-- FIRST NAME -->
     <div class="input-field col-md-6">
-    <label for="inputFname4" class="form-label">First Name</label>
+    <label for="inputFname4" class="form-label">First Name<span style="color: red;">*</span></label>
     <input type="text" value="<?php echo $result['fname']; ?>" class="form-control" id="inputFname4" name="fname" required>
   </div>
+
 <!-- LAST NAME -->
   <div class="input-field col-md-6">
-    <label for="inputLname4" class="form-label">Last Name</label>
+    <label for="inputLname4" class="form-label">Last Name<span style="color: red;">*</span></label>
     <input type="text" value="<?php echo $result['lname']; ?>" class="form-control" id="inputLname4" name="lname" required>
-  </div>
-<!-- PASSWORD -->
-  <div class="input-field col-md-6">
-    <label for="inputPassword4" class="form-label">Password</label>
-    <input type="password" value="<?php echo $result['password']; ?>" class="form-control" id="inputPassword4" name="password" required>
-  </div>
-<!-- CONFIRM-PASSWORD -->
-  <div class="input-field col-md-6">
-    <label for="inputCPassword4" class="form-label">Confirm Password</label>
-    <input type="password" value="<?php echo $result['cpassword']; ?>" class="form-control" id="inputCPassword4" name="conpassword" required>
   </div>
 
 <!-- GENDER (Radio Buttons)  -->
@@ -77,7 +72,7 @@ $result = mysqli_fetch_assoc($data);
 <!-- STATE (Dropdown)-->
 <div class="input-field col-md-4">
     <label for="inputState" class="form-label">State</label>
-    <select id="inputState" class="form-select" name="state" required>
+    <select id="inputState" class="form-select" name="state">
       <option value="">Choose...</option>
       <option value="Rajasthan"
       <?php
@@ -255,32 +250,25 @@ $result = mysqli_fetch_assoc($data);
     <?php if(in_array("English", $languages)) echo "checked"; ?>
     ><label style="margin: 0 6px 0 1px;">English</label>
 </div>
+
 <!-- EMAIL -->
 <div class="input-field col-md-6">
-    <label for="inputEmail4" class="form-label">Email</label>
+    <label for="inputEmail4" class="form-label">Email<span style="color: red;">*</span></label>
     <input type="email" value="<?php echo $result['email']; ?>" class="form-control" id="inputEmail4" name="email" required>
   </div>
 <!-- PHONE NUMBER -->
   <div class="input-field col-md-6">
-    <label for="inputPnumber4" class="form-label">Phone number</label>
+    <label for="inputPnumber4" class="form-label">Phone number<span style="color: red;">*</span></label>
     <input type="text" value="<?php echo $result['phoneno']; ?>" class="form-control" id="inputPnumber4" name="phone" required>
   </div>
 
 <!-- ADDRESS -->
   <div class="input-field col-12">
     <label for="inputAddress" class="form-label">Address</label>
-    <textarea class="form-control" id="inputAddress" name="address" required><?php echo $result['address']; ?>
+    <textarea class="form-control" id="inputAddress" name="address" required><?php echo trim($result['address']); ?>
     </textarea>
   </div>
-<!-- TERMS & CONDITIONS -->
-  <div class="input-field col-12">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="gridCheck">
-      <label class="form-check-label" for="gridCheck">
-        Agree to terms and conditions
-      </label>
-    </div>
-  </div>
+
 <!-- BUTTON -->
   <div class="input-field col-12">
     <input type="submit" value="Update" class="btn btn-primary" name="update">
@@ -300,41 +288,30 @@ $result = mysqli_fetch_assoc($data);
 
 if(isset($_POST['update']))
 {
-  $fname = $_POST['fname'];
-  $lname = $_POST['lname'];
-  $pwd = $_POST['password'];
-  $cpwd  = $_POST['conpassword'];
-  $gender = $_POST['gender'];
-  $state = $_POST['state'];
-
-  $lang = $_POST['language'];
-  $lang1 = implode(", ",$lang);
-  //echo $lang1;
-
+  $id     = $_POST['id'];
+  $fname  = $_POST['fname'];
+  $lname  = $_POST['lname'];
+  $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
+  $state  = isset($_POST['state']) ? $_POST['state'] : '';
+  $lang   = isset($_POST['language']) ? $_POST['language'] : [];
+  $lang1  = implode(", ", $lang);
   $email  = $_POST['email'];
   $phone  = $_POST['phone'];
-  $address = $_POST['address'];
+  $address = isset($_POST['address']) ? $_POST['address'] : '';
 
-  //$query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, email, phoneno, address) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$email', '$phone', '$address')";
+  $query = "UPDATE form SET fname='$fname', lname='$lname', gender='$gender',
+            state='$state', language='$lang1', email='$email', phoneno='$phone', address='$address' WHERE id='$id'";
 
-//Query for Updation
-  $query = "UPDATE form set fname='$fname', lname='$lname',password='$pwd',cpassword='$cpwd',gender='$gender',
-  state='$state',language='$lang1',email='$email',phoneno='$phone',address='$address' WHERE id='$id'";
-  
-  $data = mysqli_query($conn,$query);
+  $data = mysqli_query($conn, $query);
 
   if($data){
-    echo "<script>alert('Record Updated')</script>";
-    ?>
-    <meta http-equiv = "refresh" content = "2; url = http://localhost/registrationform/table.php" />
-
-    <?php
-  }
-  else{
+    echo "<script>alert('Record Updated');</script>";
+    echo "<meta http-equiv='refresh' content='2; url=table.php'>";
+  } else {
     echo "Failed to Update";
   }
-
 }
+
 
 ?>
 
