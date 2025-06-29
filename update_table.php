@@ -305,10 +305,10 @@ if(isset($_POST['update']))
   $data = mysqli_query($conn, $query);
 
   if($data){
-    echo "<script>alert('Record Updated');</script>";
+    echo "<script>alert('Record Updated!');</script>";
     echo "<meta http-equiv='refresh' content='2; url=table.php'>";
   } else {
-    echo "Failed to Update";
+    echo "<script>alert('Record Failed to Update!');</script>";
   }
 }
 
