@@ -18,7 +18,7 @@
     </div>
     <div class="form">
 
-    <form name="formTag" class="formTag row g-3" action="form.php" method="POST" onsubmit="return validationForm();">
+    <form name="formTag" class="formTag row g-3" action="form.php" method="POST" enctype="multipart/form-data" onsubmit="return validationForm();">
 
 <!-- FIRST NAME -->
     <div class="input-field col-md-6">
@@ -99,9 +99,14 @@
 <!-- ADDRESS -->
   <div class="input-field col-12">
     <label for="inputAddress" class="form-label">Address</label>
-    <textarea class="form-control" id="inputAddress" name="address">
-</textarea>
+    <textarea class="form-control" id="inputAddress" name="address"></textarea>
   </div>
+<!-- PHOTO -->
+<div class="input-field col-md-6">
+    <label for="photo" class="form-label">Upload Photo <span style="color:red">*</span></label>
+    <input type="file" class="form-control" id="photo" name="photo" accept="image/png, image/jpeg" required>
+    <small>Max size: 2MB | Allowed formats: JPG, PNG</small>
+</div>
 <!-- TERMS & CONDITIONS -->
   <div class="input-field col-12">
     <div class="form-check">
@@ -185,7 +190,7 @@ if(isset($_POST['register']))
   $cpwd  = $_POST['conpassword'];
   $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
   $state = isset($_POST['state']) ? $_POST['state'] : '';
-  
+
   // If language is empty - use an empty array (so implode() works safely)
   $lang = isset($_POST['language']) ? $_POST['language'] : [];
   $lang1 = implode(", ", $lang);
@@ -194,14 +199,46 @@ if(isset($_POST['register']))
   $phone  = $_POST['phone'];
   $address = isset($_POST['address']) ? $_POST['address'] : '';
 
-  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address')";
+  // Photo Upload Handling
+  if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+    $fileTmp = $_FILES['photo']['tmp_name'];
+    $fileName = $_FILES['photo']['name'];
+    $fileSize = $_FILES['photo']['size'];
+    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    $allowed = ['jpg', 'jpeg', 'png'];
+
+    if (!in_array($fileExt, $allowed)) {
+        die("Only JPG, JPEG, PNG files are allowed.");
+    }
+    if ($fileSize > 2 * 1024 * 1024) { // 2MB
+        die("File size should be less than 2MB.");
+    }
+
+    $uploadDir = "uploads/";
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    $newFileName = uniqid("IMG_") . '.' . $fileExt;
+    $destination = $uploadDir . $newFileName;
+
+    if (!move_uploaded_file($fileTmp, $destination)) {
+        die("File upload failed.");
+    }
+  } else {
+      die("Photo is required.");
+  }
+
+
+  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address, photo) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address', '$photo')";
   $data = mysqli_query($conn,$query);
 
   if($data){
-    echo "Data insertion done";
+    echo "<script>alert('Registration successful!');</script>";
+    // echo "<meta http-equiv='refresh' content='2; url=table.php'>";
   }
   else{
-    echo "Data insertion failed";
+    echo "<script>alert('Registration Failed!!!');</script>";
   }
 
 }
