@@ -87,7 +87,7 @@ if($total != 0){
     <th width="15%">Email</th>
     <th width="8%">Phone No.</th>
     <th width="20%">Address</th>
-    <th width="18%">Operation</th>
+    <!-- <th width="18%">Operation</th> -->
 </tr>
 
 <?php
@@ -102,10 +102,10 @@ if($total != 0){
         <td>".$result["email"]."</td>
         <td>".$result["phoneno"]."</td>
         <td>".$result["address"]."</td>
-        <td>
-            <a href='update_table.php?id=" . $result['id'] . "' class='update'>Update</a>
-            <a href='delete_table.php?id=" . $result['id'] . "' class='delete' onclick='return checkdelete()'>Delete</a>
-        </td>
+        // <td>
+        //     <a href='update_table.php?id=" . $result['id'] . "' class='update'>Update</a>
+        //     <a href='delete_table.php?id=" . $result['id'] . "' class='delete' onclick='return checkdelete()'>Delete</a>
+        // </td>
         </tr>";
     }
 ?>
