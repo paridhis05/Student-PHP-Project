@@ -2,8 +2,11 @@
 <head>
     <title>Table</title>
     <style>
+        *{
+            text-align:center;
+        }
         table {
-            width: 80%;
+            width: 85%;
             margin: 30px auto;
             border-collapse: collapse;
         }
@@ -48,8 +51,8 @@
         .pagination a {
             padding: 8px 12px;
             margin: 0 4px;
-            border: 1px solid #007BFF;
-            color: #007BFF;
+            border: 1px solid #005cbf;
+            color: #005cbf;
             text-decoration: none;
             border-radius: 4px;
         }
@@ -61,7 +64,7 @@
         }
 
         .pagination a.active {
-            background-color: #007BFF;
+            background-color:#005cbf;
             color: white;
         }
     </style>
@@ -113,7 +116,7 @@ $data = mysqli_query($conn, $query);
 if(mysqli_num_rows($data) != 0){
 ?>
 
-<h2>Student Records</h2>
+<h2 style="font-size: 40px; padding-top: 10px;">Student Records</h2>
 
 <!-- Live Search Box -->
 <!-- <input type="text" id="searchInput" class="search-box" onkeyup="searchTable()" placeholder="Search here..."> -->
@@ -135,17 +138,17 @@ if(mysqli_num_rows($data) != 0){
     Delete Selected
 </button>
 
-<table id="dataTable" border="2" cellspacing="7" width="100%">
+<table id="dataTable" border="2" >
     <tr>
         <!-- it will automatically toggle all the other checkboxes -->
-        <th width="5%"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"> Select All</th>
-        <th width="2%">ID</th>
-        <th width="6%">First name</th>
-        <th width="6%">Last name</th>
-        <th width="10%">State</th>
-        <th width="15%">Email</th>
-        <th width="8%">Phone No.</th>
-        <th width="20%">Address</th>
+        <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"> Select All</th>
+        <th>ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>State</th>
+        <th>Email</th>
+        <th>Phone No.</th>
+        <th>Address</th>
     </tr>
 
 <?php

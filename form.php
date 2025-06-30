@@ -102,11 +102,11 @@
     <textarea class="form-control" id="inputAddress" name="address"></textarea>
   </div>
 <!-- PHOTO -->
-<div class="input-field col-md-6">
+<!-- <div class="input-field col-md-6">
     <label for="photo" class="form-label">Upload Photo <span style="color:red">*</span></label>
     <input type="file" class="form-control" id="photo" name="photo" accept="image/png, image/jpeg" required>
     <small>Max size: 2MB | Allowed formats: JPG, PNG</small>
-</div>
+</div> -->
 <!-- TERMS & CONDITIONS -->
   <div class="input-field col-12">
     <div class="form-check">
@@ -200,37 +200,37 @@ if(isset($_POST['register']))
   $address = isset($_POST['address']) ? $_POST['address'] : '';
 
   // Photo Upload Handling
-  if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
-    $fileTmp = $_FILES['photo']['tmp_name'];
-    $fileName = $_FILES['photo']['name'];
-    $fileSize = $_FILES['photo']['size'];
-    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png'];
+  // if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+  //   $fileTmp = $_FILES['photo']['tmp_name'];
+  //   $fileName = $_FILES['photo']['name'];
+  //   $fileSize = $_FILES['photo']['size'];
+  //   $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+  //   $allowed = ['jpg', 'jpeg', 'png'];
 
-    if (!in_array($fileExt, $allowed)) {
-        die("Only JPG, JPEG, PNG files are allowed.");
-    }
-    if ($fileSize > 2 * 1024 * 1024) { // 2MB
-        die("File size should be less than 2MB.");
-    }
+  //   if (!in_array($fileExt, $allowed)) {
+  //       die("Only JPG, JPEG, PNG files are allowed.");
+  //   }
+  //   if ($fileSize > 2 * 1024 * 1024) { // 2MB
+  //       die("File size should be less than 2MB.");
+  //   }
 
-    $uploadDir = "uploads/";
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
+  //   $uploadDir = "uploads/";
+  //   if (!is_dir($uploadDir)) {
+  //       mkdir($uploadDir, 0777, true);
+  //   }
 
-    $newFileName = uniqid("IMG_") . '.' . $fileExt;
-    $destination = $uploadDir . $newFileName;
+  //   $newFileName = uniqid("IMG_") . '.' . $fileExt;
+  //   $destination = $uploadDir . $newFileName;
 
-    if (!move_uploaded_file($fileTmp, $destination)) {
-        die("File upload failed.");
-    }
-  } else {
-      die("Photo is required.");
-  }
+  //   if (!move_uploaded_file($fileTmp, $destination)) {
+  //       die("File upload failed.");
+  //   }
+  // } else {
+  //     die("Photo is required.");
+  // }
 
 
-  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address, photo) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address', '$photo')";
+  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address')";
   $data = mysqli_query($conn,$query);
 
   if($data){
