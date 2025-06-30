@@ -78,7 +78,6 @@ $lname = isset($_GET['lname']) ? $_GET['lname'] : '';
 $email = isset($_GET['email']) ? $_GET['email'] : '';
 
 // Build query with filters
-// $filter_query = "SELECT * FROM form WHERE 1=1";
 $filter_query = "FROM form WHERE 1=1";
 
 if (!empty($fname)) {
@@ -92,7 +91,6 @@ if (!empty($email)) {
 }
 
 // Find number of records stored
-// $record = mysqli_query($conn, "SELECT COUNT(*) as total $filter_query");
 $record = mysqli_query($conn, "SELECT COUNT(*) as total $filter_query");
 $row = mysqli_fetch_assoc($record);
 $total_records = $row['total'];
@@ -170,9 +168,13 @@ if(mysqli_num_rows($data) != 0){
 <!-- PAGINATION -->
 <div class="pagination">
     <?php
-    $queryParams = $_GET;
-    unset($queryParams['page']);
-    $baseURL = '?' . http_build_query($queryParams);
+    $getParams = $_GET;
+
+    // remove page parameter
+    unset($getParams['page']);
+
+    // Build base URL
+    $baseURL = '?' . http_build_query($getParams);
 
     $prevPage = $page - 1;
     $nextPage = $page + 1;
