@@ -33,7 +33,25 @@
 <?php
 include("connection.php");
 
-$query = "SELECT * FROM form"; 
+// Collect search filters
+$fname = isset($_GET['fname']) ? $_GET['fname']: '';
+$lname = isset($_GET['lname']) ? $_GET['lname']: '';
+$email = isset($_GET['email']) ? $_GET['email']: '';
+
+// Build query with filters (partial match using LIKE)
+$query = "SELECT * FROM form WHERE 1=1";
+
+if (!empty($fname)) {
+    $query .= " AND fname LIKE '%$fname%'";
+}
+if (!empty($lname)) {
+    $query .= " AND lname LIKE '%$lname%'";
+}
+if (!empty($email)) {
+    $query .= " AND email LIKE '%$email%'";
+}
+
+// $query = "SELECT * FROM form"; 
 $data = mysqli_query($conn, $query);
 $total = mysqli_num_rows($data);
 
@@ -43,7 +61,17 @@ if($total != 0){
 <h2>RECORDS</h2>
 
 <!-- Live Search Box -->
-<input type="text" id="searchInput" class="search-box" onkeyup="searchTable()" placeholder="Search here...">
+<!-- <input type="text" id="searchInput" class="search-box" onkeyup="searchTable()" placeholder="Search here..."> -->
+
+<!-- Search Form -->
+<form action="table.php" method="GET" style="margin-bottom: 20px;">
+<!-- 'value' is used for retain entered values -->
+    <input type="text" name="fname" value="<?php echo htmlspecialchars($fname); ?>" placeholder="First Name" style="padding: 6px;">
+    <input type="text" name="lname" value="<?php echo htmlspecialchars($lname); ?>" placeholder="Last Name" style="padding: 6px;">
+    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" placeholder="Email" style="padding: 6px;">
+
+    <button type="submit" style="padding: 6px 12px;;">Search</button>
+</form>
 
 
 <!-- delete button -->
