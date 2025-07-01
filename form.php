@@ -102,11 +102,12 @@
     <textarea class="form-control" id="inputAddress" name="address"></textarea>
   </div>
 <!-- PHOTO -->
-<!-- <div class="input-field col-md-6">
+<div class="input-field col-md-6">
     <label for="photo" class="form-label">Upload Photo <span style="color:red">*</span></label>
     <input type="file" class="form-control" id="photo" name="photo" accept="image/png, image/jpeg" required>
-    <small>Max size: 2MB | Allowed formats: JPG, PNG</small>
-</div> -->
+    <!-- <small>Max size: 2MB | Allowed formats: JPG, PNG</small> -->
+</div>
+
 <!-- TERMS & CONDITIONS -->
   <div class="input-field col-12">
     <div class="form-check">
@@ -199,39 +200,52 @@ if(isset($_POST['register']))
   $phone  = $_POST['phone'];
   $address = isset($_POST['address']) ? $_POST['address'] : '';
 
+  // $file_name = $_FILES['photo']['name'];
+  // $tempname = $_FILES['photo']['tmp_name'];
+  // $folder = 'Uploads/'.$file_name;
+
   // Photo Upload Handling
-  // if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
-  //   $fileTmp = $_FILES['photo']['tmp_name'];
-  //   $fileName = $_FILES['photo']['name'];
-  //   $fileSize = $_FILES['photo']['size'];
-  //   $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-  //   $allowed = ['jpg', 'jpeg', 'png'];
+  if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+        $fileTmp = $_FILES['photo']['tmp_name'];
+        $fileName = $_FILES['photo']['name'];
+        $fileSize = $_FILES['photo']['size'];
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION)); // Extract file extension
+        $allowed = ['jpg', 'jpeg', 'png'];
 
-  //   if (!in_array($fileExt, $allowed)) {
-  //       die("Only JPG, JPEG, PNG files are allowed.");
-  //   }
-  //   if ($fileSize > 2 * 1024 * 1024) { // 2MB
-  //       die("File size should be less than 2MB.");
-  //   }
+        if (!in_array($fileExt, $allowed)) {
+            die("<script>alert('Only JPG, JPEG, PNG files are allowed.'); window.history.back();</script>");
+        }
 
-  //   $uploadDir = "uploads/";
-  //   if (!is_dir($uploadDir)) {
-  //       mkdir($uploadDir, 0777, true);
-  //   }
+        if ($fileSize > 2 * 1024 * 1024) {
+            die("<script>alert('File size should be less than 2MB.'); window.history.back();</script>");
+        }
 
-  //   $newFileName = uniqid("IMG_") . '.' . $fileExt;
-  //   $destination = $uploadDir . $newFileName;
+        $uploadDir = "uploads/";
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
 
-  //   if (!move_uploaded_file($fileTmp, $destination)) {
-  //       die("File upload failed.");
-  //   }
-  // } else {
-  //     die("Photo is required.");
-  // }
+        $newFileName = uniqid("IMG_") . '.' . $fileExt;
+        $destination = $uploadDir . $newFileName;
+
+        if (!move_uploaded_file($fileTmp, $destination)) {
+            die("<script>alert('File upload failed.'); window.history.back();</script>");
+        }
+    } else {
+        die("<script>alert('Photo is required.'); window.history.back();</script>");
+    }
+  
 
 
-  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address')";
+  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address, photo) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address', '$newFileName')";
   $data = mysqli_query($conn,$query);
+
+  // if(move_uploaded_file($tempname, $folder)){
+  //   echo "<script>alert('File uploaded successful!');</script>";
+  // }
+  // else{
+  //   echo "<script>alert('File not uploaded');</script>";
+  // }
 
   if($data){
     echo "<script>alert('Registration successful!');</script>";
@@ -239,7 +253,7 @@ if(isset($_POST['register']))
   }
   else{
     echo "<script>alert('Registration Failed!!!');</script>";
-  }
+  } 
 
 }
 
