@@ -57,6 +57,12 @@
             border-radius: 4px;
         }
 
+        .pagination span {
+            padding: 8px 12px;
+            color: #888;
+            font-weight: bold;
+        }
+
         .pagination a.disabled {
             color: #aaa;
             border-color: #aaa;
@@ -181,14 +187,43 @@ if(mysqli_num_rows($data) != 0){
 
     $prevPage = $page - 1;
     $nextPage = $page + 1;
+
+    // how many pages to show
+    $visiblePages = [$page];
+
+    if($page + 1 <= $total_pages){
+        $visiblePages[] = $page + 1;
+    }
     ?>
+
+    <a href="<?= $baseURL ?>&page=1" class="<?= $page == 1 ? 'disabled' : '' ?>">First</a>
+
     <a href="<?= $baseURL ?>&page=<?= $prevPage ?>" class="<?= $page <= 1 ? 'disabled' : '' ?>">Prev</a>
 
-    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-        <a href="<?= $baseURL ?>&page=<?= $i ?>" class="<?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
-    <?php } ?>
+    <?php
+
+    if($page > 1){
+        echo'<span>...<span>';
+    }
+
+    //Show current and next page only
+    foreach($visiblePages as $i){
+        if($i <= $total_pages){
+            $activePage = ($i == $page) ? 'active' : '';
+            echo "<a href='{$baseURL}&page={$i}' class='{$activePage}'>{$i}</a>";
+        }
+    }
+
+    //if next page is not the last one
+    if($page + 1 < $total_pages){
+        echo '<span>...</span>';
+    }
+
+    ?>
 
     <a href="<?= $baseURL ?>&page=<?= $nextPage ?>" class="<?= $page >= $total_pages ? 'disabled' : '' ?>">Next</a>
+
+    <a href="<?= $baseURL ?>&page=<?= $total_pages ?>" class="<?= $page == $toatal_pages ? 'disabled' : '' ?>">Last</a>
 </div>
 
 <?php
