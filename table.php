@@ -7,7 +7,7 @@
         }
         table {
             width: 85%;
-            margin: 30px auto;
+            margin: 20px auto;
             border-collapse: collapse;
         }
 
@@ -17,12 +17,55 @@
             text-align: center;
         }
 
+        .search-form {
+            margin: 20px auto;
+            width: 50%;
+            max-width: 500px;
+        }
+
+        .search-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .search-grid input, .search-grid select {
+            flex: 0 0 48%;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .search-btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .search-btn {
+            padding: 8px 18px;
+            font-size: 16px;
+            background-color: #005cbf;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background-color:rgb(0, 40, 100);
+        }
+
+        .delete-btn-container {
+            text-align: left;
+            margin: 20px 8%;
+        }
+
         .btn-delete {
             background-color: #C80036;
             color: white;
             padding: 8px 14px;
             border: none;
-            margin: 10px 5px;
+            margin: 5px;
             cursor: pointer;
             border-radius: 5px;
             font-weight: bold;
@@ -84,7 +127,10 @@ $records_limit = 5;
 // Get search filters
 $fname = isset($_GET['fname']) ? $_GET['fname'] : '';
 $lname = isset($_GET['lname']) ? $_GET['lname'] : '';
+$gender = isset($_GET['gender']) ? $_GET['gender'] : '';
+$state = isset($_GET['state']) ? $_GET['state'] : '';
 $email = isset($_GET['email']) ? $_GET['email'] : '';
+$phone = isset($_GET['phone']) ? $_GET['phone'] : '';
 
 // Build query with filters
 $filter_query = "FROM form WHERE 1=1";
@@ -95,8 +141,17 @@ if (!empty($fname)) {
 if (!empty($lname)) {
     $filter_query .= " AND lname LIKE '%$lname%'";
 }
+if (!empty($gender)) {
+    $filter_query .= " AND gender = '$gender'";
+}
+if (!empty($state)) {
+    $filter_query .= " AND state LIKE '%$state%'";
+}
 if (!empty($email)) {
     $filter_query .= " AND email LIKE '%$email%'";
+}
+if (!empty($phone)) {
+    $filter_query .= " AND phoneno LIKE '%$phone%'";
 }
 
 // Find number of records stored
@@ -104,10 +159,12 @@ $record = mysqli_query($conn, "SELECT COUNT(*) as total $filter_query");
 $row = mysqli_fetch_assoc($record);
 $total_records = $row['total'];
 
-$total_pages = ceil($total_records / $records_limit);
-
 // Get Current page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+$total_pages = max(1, ceil($total_records / $records_limit));
+$page = max(1, min($page, $total_pages));
+
 if($page < 1)
     $page = 1;
 if($page > $total_pages)
@@ -128,21 +185,37 @@ if(mysqli_num_rows($data) != 0){
 <!-- <input type="text" id="searchInput" class="search-box" onkeyup="searchTable()" placeholder="Search here..."> -->
 
 <!-- Search Form -->
-<form action="table.php" method="GET" style="margin-bottom: 20px;">
-<!-- 'value' is used for retain entered values -->
-    <input type="text" name="fname" value="<?php echo htmlspecialchars($fname); ?>" placeholder="First Name" style="padding: 6px;">
-    <input type="text" name="lname" value="<?php echo htmlspecialchars($lname); ?>" placeholder="Last Name" style="padding: 6px;">
-    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" placeholder="Email" style="padding: 6px;">
+<form action="table.php" method="GET" class="search-form">
+    <div class="search-grid">
+        <input type="text" name="fname" value="<?= htmlspecialchars($fname); ?>" placeholder="First Name">
+        <input type="text" name="lname" value="<?= htmlspecialchars($lname); ?>" placeholder="Last Name">
 
-    <button type="submit" style="padding: 6px 12px;;">Search</button>
+        <select name="gender">
+            <option value="">Gender</option>
+            <option value="Male" <?= $gender == 'Male' ? 'selected' : '' ?>>Male</option>
+            <option value="Female" <?= $gender == 'Female' ? 'selected' : '' ?>>Female</option>
+            <option value="Other" <?= $gender == 'Other' ? 'selected' : '' ?>>Other</option>
+        </select>
+
+        <input type="text" name="state" value="<?= htmlspecialchars($state); ?>" placeholder="State">
+        <input type="email" name="email" value="<?= htmlspecialchars($email); ?>" placeholder="Email">
+        <input type="text" name="phone" value="<?= htmlspecialchars($phone); ?>" placeholder="Phone No.">
+    </div>
+
+    <div class="search-btn-container">
+        <button type="submit" class="search-btn">Search</button>
+    </div>
 </form>
+
 
 <form method="POST" action="delete_table.php" id="deleteForm">
 
 <!-- delete button -->
-<button type="submit" name="delete_selected" class="btn-delete" onclick="return confirm('Are you sure you want to delete selected records?');">
-    Delete Selected
-</button>
+<div class="delete-btn-container">
+    <button type="submit" name="delete_selected" class="btn-delete" onclick="return confirm('Are you sure you want to delete selected records?');">
+        Delete Selected
+    </button>
+</div>
 
 <table id="dataTable" border="2" >
     <tr>
@@ -151,6 +224,7 @@ if(mysqli_num_rows($data) != 0){
         <th>ID</th>
         <th>First name</th>
         <th>Last name</th>
+        <th>Gender</th>
         <th>State</th>
         <th>Email</th>
         <th>Phone No.</th>
@@ -164,6 +238,7 @@ if(mysqli_num_rows($data) != 0){
             <td>".$result["id"]."</td>
             <td>".$result["fname"]."</td>
             <td>".$result['lname']."</td>
+            <td>".$result['gender']."</td>
             <td>".$result["state"]."</td>
             <td>".$result["email"]."</td>
             <td>".$result["phoneno"]."</td>
@@ -203,7 +278,7 @@ if(mysqli_num_rows($data) != 0){
     <?php
 
     if($page > 1){
-        echo'<span>...<span>';
+        echo'<span>...</span>';
     }
 
     //Show current and next page only
@@ -223,7 +298,7 @@ if(mysqli_num_rows($data) != 0){
 
     <a href="<?= $baseURL ?>&page=<?= $nextPage ?>" class="<?= $page >= $total_pages ? 'disabled' : '' ?>">Next</a>
 
-    <a href="<?= $baseURL ?>&page=<?= $total_pages ?>" class="<?= $page == $toatal_pages ? 'disabled' : '' ?>">Last</a>
+    <a href="<?= $baseURL ?>&page=<?= $total_pages ?>" class="<?= $page == $total_pages ? 'disabled' : '' ?>">Last</a>
 </div>
 
 <?php
