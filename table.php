@@ -229,6 +229,7 @@ if(mysqli_num_rows($data) != 0){
         <th>Email</th>
         <th>Phone No.</th>
         <th>Address</th>
+        <th>photo</th>
     </tr>
 
 <?php
@@ -243,6 +244,7 @@ if(mysqli_num_rows($data) != 0){
             <td>".$result["email"]."</td>
             <td>".$result["phoneno"]."</td>
             <td>".$result["address"]."</td>
+            <td>".$result["photo"]."</td>
         </tr>";
     }
 ?>
@@ -300,6 +302,17 @@ if(mysqli_num_rows($data) != 0){
 
     <a href="<?= $baseURL ?>&page=<?= $total_pages ?>" class="<?= $page == $total_pages ? 'disabled' : '' ?>">Last</a>
 </div>
+
+<!-- <div>
+    <?php 
+        $res = mysqli_query($con, "SELECT * FROM form");
+        while($rowss = mysqli_fetch_assoc($res)){
+    ?>
+    <img src="Uploads/<?php ?>" />
+    <?php 
+        }
+    ?>
+</div> -->
 
 <?php
 
