@@ -222,6 +222,7 @@ if(mysqli_num_rows($data) != 0){
         <!-- it will automatically toggle all the other checkboxes -->
         <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"> Select All</th>
         <th>ID</th>
+        <th>Photo</th>
         <th>First name</th>
         <th>Last name</th>
         <th>Gender</th>
@@ -229,14 +230,19 @@ if(mysqli_num_rows($data) != 0){
         <th>Email</th>
         <th>Phone No.</th>
         <th>Address</th>
-        <th>photo</th>
+        
     </tr>
 
 <?php
     while($result = mysqli_fetch_assoc($data)){
         echo "<tr>
             <td><input type='checkbox' name='delete_ids[]' value='".$result["id"]."'></td>
-            <td>".$result["id"]."</td>
+            <td><a href='update_table.php?id=$result[id]' style='text-decoration: none; color: #005cbf; font-weight: bold;'>
+                ".$result["id"]."
+    </a></td>
+            <td>
+                <img src='uploads/".$result['photo']."' alt='Photo' width='60' height='60' style='object-fit: cover; border-radius: 4px;'>
+            </td>
             <td>".$result["fname"]."</td>
             <td>".$result['lname']."</td>
             <td>".$result['gender']."</td>
@@ -244,7 +250,8 @@ if(mysqli_num_rows($data) != 0){
             <td>".$result["email"]."</td>
             <td>".$result["phoneno"]."</td>
             <td>".$result["address"]."</td>
-            <td>".$result["photo"]."</td>
+            
+
         </tr>";
     }
 ?>
