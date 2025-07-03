@@ -1,17 +1,4 @@
 <?php
-/*
-echo $_GET['id'];
-echo $_GET['fn'];
-echo $_GET['ln'];
-echo $_GET['gen'];
-echo $_GET['st'];
-echo $_GET['em'];
-echo $_GET['ph'];
-echo $_GET['add'];
-*/
-?>
-
-<?php
 include("connection.php");
 
 $id = $_GET['id'];
@@ -31,6 +18,34 @@ $result = mysqli_fetch_assoc($data);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styleform.css">
     <title>Update table</title>
+    <style>
+      .photo-preview-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.photo-preview-container img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 3px solid #005cbf;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.photo-preview-container img:hover {
+    transform: scale(1.05);
+}
+
+.photo-preview-name {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+    </style>
 </head>
 <body>
 
@@ -40,7 +55,10 @@ $result = mysqli_fetch_assoc($data);
     </div>
     <div class="form">
 
-    
+    <div class="photo-preview-container">
+      <img src="uploads/<?= htmlspecialchars($photo) ?>" alt="Student Photo">
+      <div class="photo-preview-name"><?= htmlspecialchars($studentName) ?></div>
+    </div>
     <form class="row g-3" action="#" method="POST">
     
 <!-- hidden input - Carries the current user's ID -->
