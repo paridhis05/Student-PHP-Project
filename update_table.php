@@ -25,8 +25,8 @@ $result = mysqli_fetch_assoc($data);
 }
 
 .photo-preview-container img {
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 8px;
     border: 3px solid #005cbf;
@@ -56,9 +56,12 @@ $result = mysqli_fetch_assoc($data);
     <div class="form">
 
     <div class="photo-preview-container">
-      <img src="uploads/<?= htmlspecialchars($photo) ?>" alt="Student Photo">
-      <div class="photo-preview-name"><?= htmlspecialchars($studentName) ?></div>
+      <a href="uploads/image2_<?= htmlspecialchars($result['photo']) ?>" target="_blank">
+        <img src="uploads/image1_<?= htmlspecialchars($result['photo']) ?>" alt="Student Photo">
+      </a>
+      <div class="photo-preview-name"><?= htmlspecialchars($result['id']) ?></div>
     </div>
+
     <form class="row g-3" action="#" method="POST">
     
 <!-- hidden input - Carries the current user's ID -->
