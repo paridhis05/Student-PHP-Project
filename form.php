@@ -182,34 +182,56 @@ function validationForm() {
 
 
 <?php
+if (isset($_POST['register'])) {
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
+    $pwd = $_POST['password'];
+    $cpwd = $_POST['conpassword'];
+    $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
+    $state = isset($_POST['state']) ? $_POST['state'] : '';
+    $lang = isset($_POST['language']) ? $_POST['language'] : [];
+    $lang1 = implode(", ", $lang);
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $address = isset($_POST['address']) ? $_POST['address'] : '';
 
-if(isset($_POST['register']))
-{
-  $fname = $_POST['fname'];
-  $lname = $_POST['lname'];
-  $pwd = $_POST['password'];
-  $cpwd  = $_POST['conpassword'];
-  $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
-  $state = isset($_POST['state']) ? $_POST['state'] : '';
+    // Function to resize and save images
+    function resizeImage($source, $destination, $new_width, $new_height, $ext) {
+        if ($ext == 'jpg' || $ext == 'jpeg') {
+            $image = imagecreatefromjpeg($source);
+        } elseif ($ext == 'png') {
+            $image = imagecreatefrompng($source);
+        } else {
+            return false;
+        }
 
-  // If language is empty - use an empty array (so implode() works safely)
-  $lang = isset($_POST['language']) ? $_POST['language'] : [];
-  $lang1 = implode(", ", $lang);
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $resized = imagecreatetruecolor($new_width, $new_height);
 
-  $email  = $_POST['email'];
-  $phone  = $_POST['phone'];
-  $address = isset($_POST['address']) ? $_POST['address'] : '';
+        if ($ext == 'png') {
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+        }
 
-  // $file_name = $_FILES['photo']['name'];
-  // $tempname = $_FILES['photo']['tmp_name'];
-  // $folder = 'Uploads/'.$file_name;
+        imagecopyresampled($resized, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
-  // Photo Upload Handling
-  if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+        if ($ext == 'jpg' || $ext == 'jpeg') {
+            imagejpeg($resized, $destination, 90);
+        } elseif ($ext == 'png') {
+            imagepng($resized, $destination, 9);
+        }
+
+        imagedestroy($image);
+        imagedestroy($resized);
+    }
+
+    // Photo Upload Handling
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
         $fileTmp = $_FILES['photo']['tmp_name'];
         $fileName = $_FILES['photo']['name'];
         $fileSize = $_FILES['photo']['size'];
-        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION)); // Extract file extension
+        $fileExt  = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png'];
 
         if (!in_array($fileExt, $allowed)) {
@@ -226,36 +248,31 @@ if(isset($_POST['register']))
         }
 
         $newFileName = uniqid("IMG_") . '.' . $fileExt;
-        $destination = $uploadDir . $newFileName;
+        $originalPath = $uploadDir . $newFileName;
 
-        if (!move_uploaded_file($fileTmp, $destination)) {
+        if (!move_uploaded_file($fileTmp, $originalPath)) {
             die("<script>alert('File upload failed.'); window.history.back();</script>");
         }
+
+        // Create small and large versions
+        resizeImage($originalPath, $uploadDir . "image1_" . $newFileName, 60, 60, $fileExt);
+        resizeImage($originalPath, $uploadDir . "image2_" . $newFileName, 800, 800, $fileExt);
     } else {
         die("<script>alert('Photo is required.'); window.history.back();</script>");
     }
-  
 
+    $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address, photo) 
+              VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address', '$newFileName')";
+    
+    $data = mysqli_query($conn, $query);
 
-  $query = "INSERT INTO form (fname, lname, password, cpassword, gender, state, language, email, phoneno, address, photo) VALUES('$fname', '$lname', '$pwd', '$cpwd', '$gender', '$state', '$lang1', '$email', '$phone', '$address', '$newFileName')";
-  $data = mysqli_query($conn,$query);
-
-  // if(move_uploaded_file($tempname, $folder)){
-  //   echo "<script>alert('File uploaded successful!');</script>";
-  // }
-  // else{
-  //   echo "<script>alert('File not uploaded');</script>";
-  // }
-
-  if($data){
-    echo "<script>alert('Registration successful!');</script>";
-    // echo "<meta http-equiv='refresh' content='2; url=table.php'>";
-  }
-  else{
-    echo "<script>alert('Registration Failed!!!');</script>";
-  } 
-
+    if ($data) {
+        echo "<script>alert('Registration successful!');</script>";
+        // echo "<meta http-equiv='refresh' content='2; url=table.php'>";
+    } else {
+        echo "<script>alert('Registration Failed!!!');</script>";
+    }
 }
-
 ?>
+
 

@@ -241,7 +241,9 @@ if(mysqli_num_rows($data) != 0){
                 ".$result["id"]."
     </a></td>
             <td>
-                <img src='uploads/".$result['photo']."' alt='Photo' width='60' height='60' style='object-fit: cover; border-radius: 4px;'>
+                <a href='uploads/image2_". htmlspecialchars($result['photo']) ."' target='_blank'>
+                    <img src='uploads/image1_". htmlspecialchars($result['photo']) ."' width='60' height='60' style='object-fit:cover; border-radius:4px;' />
+                </a>
             </td>
             <td>".$result["fname"]."</td>
             <td>".$result['lname']."</td>
@@ -255,6 +257,7 @@ if(mysqli_num_rows($data) != 0){
         </tr>";
     }
 ?>
+<!-- <img src='uploads/".$result['photo']."' alt='Photo' width='60' height='60' style='object-fit: cover; border-radius: 4px;'> -->
 </table>
 </form>
 
