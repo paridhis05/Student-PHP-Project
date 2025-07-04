@@ -55,23 +55,24 @@ $result = mysqli_fetch_assoc($data);
     </div>
     <div class="form">
 
-    <div class="photo-preview-container">
-      <a href="uploads/image2_<?= htmlspecialchars($result['photo']) ?>" target="_blank">
-        <img src="uploads/image1_<?= htmlspecialchars($result['photo']) ?>" alt="Student Photo">
-      </a>
-      <div class="photo-preview-name"><?= htmlspecialchars($result['id']) ?></div>
-    </div>
+    <form class="row g-3" action="#" method="POST" enctype="multipart/form-data">
 
-    <form class="row g-3" action="#" method="POST">
+    <div class="photo-preview-container">
+        <label for="photoInput" style="cursor: pointer;" title="Click to change photo">
+            <img id="photoPreview" src="uploads/image1_<?= htmlspecialchars($result['photo']) ?>" alt="Student Photo">
+        </label>
+        <input type="file" id="photoInput" name="photo" accept="image/png, image/jpeg" style="display: none;">
+        <div class="photo-preview-name"><?= htmlspecialchars($result['id']) ?></div>
+    </div>
     
 <!-- hidden input - Carries the current user's ID -->
     <input type="hidden" name="id" value="<?php echo $id; ?>">
 
 <!-- FIRST NAME -->
     <div class="input-field col-md-6">
-    <label for="inputFname4" class="form-label">First Name<span style="color: red;">*</span></label>
-    <input type="text" value="<?php echo $result['fname']; ?>" class="form-control" id="inputFname4" name="fname" required>
-  </div>
+      <label for="inputFname4" class="form-label">First Name<span style="color: red;">*</span></label>
+      <input type="text" value="<?php echo $result['fname']; ?>" class="form-control" id="inputFname4" name="fname" required>
+    </div>
 
 <!-- LAST NAME -->
   <div class="input-field col-md-6">
@@ -300,7 +301,20 @@ $result = mysqli_fetch_assoc($data);
         </div>
     </div>
 </div>
-    
+
+<script>
+document.getElementById('photoInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreview').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
 </body>
 </html>
 
@@ -320,8 +334,88 @@ if(isset($_POST['update']))
   $phone  = $_POST['phone'];
   $address = isset($_POST['address']) ? $_POST['address'] : '';
 
+  // Get old photo filename from DB
+    $getOld = mysqli_query($conn, "SELECT photo FROM form WHERE id='$id'");
+    $oldData = mysqli_fetch_assoc($getOld);
+    $oldPhoto = $oldData['photo'];
+
+    // Image Resize Function -
+    function resizeImage($source, $destination, $new_width, $new_height, $ext) {
+        if ($ext == 'jpg' || $ext == 'jpeg') {
+            $image = imagecreatefromjpeg($source);
+        } elseif ($ext == 'png') {
+            $image = imagecreatefrompng($source);
+        } else {
+            return false;
+        }
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $resized = imagecreatetruecolor($new_width, $new_height);
+
+        if ($ext == 'png') {
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+        }
+
+        imagecopyresampled($resized, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+
+        if ($ext == 'jpg' || $ext == 'jpeg') {
+            imagejpeg($resized, $destination, 90);
+        } elseif ($ext == 'png') {
+            imagepng($resized, $destination, 9);
+        }
+
+        imagedestroy($image);
+        imagedestroy($resized);
+    }
+
+    $photoToUse = $oldPhoto;
+
+    // If New Photo is selected
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+        $fileTmp = $_FILES['photo']['tmp_name'];
+        $fileName = $_FILES['photo']['name'];
+        $fileSize = $_FILES['photo']['size'];
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png'];
+
+        if (!in_array($fileExt, $allowed)) {
+            die("<script>alert('Only JPG, JPEG, PNG files are allowed.'); window.history.back();</script>");
+        }
+
+        if ($fileSize > 2 * 1024 * 1024) {
+            die("<script>alert('File size should be less than 2MB.'); window.history.back();</script>");
+        }
+
+        $uploadDir = "uploads/";
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $newFileName = uniqid("IMG_") . '.' . $fileExt;
+        $originalPath = $uploadDir . $newFileName;
+
+        if (move_uploaded_file($fileTmp, $originalPath)) {
+            $smallPath = $uploadDir . "image1_" . $newFileName;
+            resizeImage($originalPath, $smallPath, 60, 60, $fileExt);
+
+            $largePath = $uploadDir . "image2_" . $newFileName;
+            resizeImage($originalPath, $largePath, 800, 800, $fileExt);
+
+            // Remove old images if you want
+            @unlink("uploads/" . $oldPhoto);
+            @unlink("uploads/image1_" . $oldPhoto);
+            @unlink("uploads/image2_" . $oldPhoto);
+
+            $photoToUse = $newFileName;
+        } else {
+            die("<script>alert('New photo upload failed.'); window.history.back();</script>");
+        }
+    }
+
   $query = "UPDATE form SET fname='$fname', lname='$lname', gender='$gender',
-            state='$state', language='$lang1', email='$email', phoneno='$phone', address='$address' WHERE id='$id'";
+            state='$state', language='$lang1', email='$email', phoneno='$phone', address='$address', photo='$photoToUse' WHERE id='$id'";
 
   $data = mysqli_query($conn, $query);
 
