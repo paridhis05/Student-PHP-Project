@@ -1,3 +1,7 @@
+<?php
+session_start();
+// echo "Welcome ".$_SESSION['user_name'];
+?>
 <html>
 <head>
     <title>Table</title>
@@ -121,6 +125,14 @@
 
 <?php
 include("connection.php");
+
+$userprofile = $_SESSION['user_name'];
+
+if($userprofile == true){
+
+} else{
+    echo "<meta http-equiv='refresh' content='0; url=login.php'>";
+}
 
 $records_limit = 5;
 
