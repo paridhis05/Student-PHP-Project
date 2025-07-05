@@ -4,21 +4,28 @@ session_start();
 ?>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Table</title>
     <style>
         *{
             text-align:center;
         }
-        table {
-            width: 85%;
-            margin: 20px auto;
+
+        .table-container {  
+            overflow-x: auto;
+            width: 100%;
+            margin: auto;
+        }
+
+        table { 
+            width: 100%;
             border-collapse: collapse;
         }
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #aaa;
-            text-align: center;
+        th, td {    
+            padding: 8px;
+            font-size: 16px;
         }
 
         .search-form {
@@ -67,29 +74,29 @@ session_start();
         .btn-delete {
             background-color: #C80036;
             color: white;
-            padding: 8px 14px;
+            padding: 8px 18px;
             border: none;
             margin: 5px;
             cursor: pointer;
             border-radius: 5px;
-            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #C80036;
         }
 
         .btn-delete:hover {
             background-color: white;
             color: #C80036;
-            border: 1px solid #C80036;
         }
 
         .btn-logout{
             background-color:rgb(55, 96, 216);
             color: white;
-            padding: 8px 14px;
+            padding: 10px 18px;
             border: none;
             margin: 20px;
             cursor: pointer;
             border-radius: 5px;
-            font-weight: bold;
+            font-size: 16px;
         }
 
         .search-box {
@@ -131,6 +138,30 @@ session_start();
             background-color:#005cbf;
             color: white;
         }
+
+        @media screen and (max-width: 768px) {
+        .search-grid {
+            flex-direction: column;
+        }
+
+        .search-grid input, .search-grid select {
+            width: 100%;
+        }
+
+        .btn-delete, .search-btn {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .pagination a, .pagination span {
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        table, thead, tbody, th, td, tr {
+            font-size: 12px;
+        }
+}
     </style>
 </head>
 
@@ -240,6 +271,7 @@ if(mysqli_num_rows($data) != 0){
     </button>
 </div>
 
+<div class="table-container">
 <table id="dataTable" border="2" >
     <tr>
         <!-- it will automatically toggle all the other checkboxes -->
@@ -282,6 +314,7 @@ if(mysqli_num_rows($data) != 0){
 ?>
 <!-- <img src='uploads/".$result['photo']."' alt='Photo' width='60' height='60' style='object-fit: cover; border-radius: 4px;'> -->
 </table>
+</div>
 </form>
 
 <!-- PAGINATION -->
