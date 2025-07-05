@@ -81,6 +81,17 @@ session_start();
             border: 1px solid #C80036;
         }
 
+        .btn-logout{
+            background-color:rgb(55, 96, 216);
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            margin: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
         .search-box {
             margin-bottom: 10px;
             padding: 8px;
@@ -324,6 +335,8 @@ if(mysqli_num_rows($data) != 0){
 
     <a href="<?= $baseURL ?>&page=<?= $total_pages ?>" class="<?= $page == $total_pages ? 'disabled' : '' ?>">Last</a>
 </div>
+
+<a href="logout.php"><input type="submit" class="btn-logout" name="" value="Logout"></a>
 
 <!-- <div>
     <?php 
