@@ -15,19 +15,33 @@ if (isset($_POST['submit'])) {
     $total = $english + $hindi + $science + $math + $history + $computer;
     $percentage = $total / 5;
 
-    if ($percentage >= 90) $grade = 'A+';
-    else if ($percentage >= 75) $grade = 'A';
-    else if ($percentage >= 60) $grade = 'B';
-    else if ($percentage >= 45) $grade = 'C';
-    else $grade = 'F';
+    if ($percentage >= 90){ 
+        $grade = 'A+';
+        $reward = 'Gold Medal';
+    } else if ($percentage >= 75) {
+        $grade = 'A';
+        $reward = '';
+    } 
+    else if ($percentage >= 60)  {
+        $grade = 'B';
+        $reward = '';
+    } 
+    else if ($percentage >= 45) {
+        $grade = 'C';
+        $reward = '';
+    } 
+    else  {
+        $grade = 'F';
+        $reward = '';
+    } 
 
-    $query = "INSERT INTO marks (student_id, english, hindi, science, math, history, computer, total_marks, percentage, grade) 
-              VALUES ('$student_id', '$english', '$hindi', '$science', '$math', '$history', '$computer', '$total', '$percentage', '$grade')";
+    $query = "INSERT INTO marks (student_id, english, hindi, science, math, history, computer, total_marks, percentage, grade, reward) 
+              VALUES ('$student_id', '$english', '$hindi', '$science', '$math', '$history', '$computer', '$total', '$percentage', '$grade', '$reward')";
 
     $run = mysqli_query($conn, $query);
 
     if ($run) {
-        echo "<script>alert('Marks entered successfully');</script>";
+         echo "<script>alert('Marks Submitted! Grade: $grade " . ($reward ? "Reward: $reward" : "") . "');</script>";
     } else {
         echo "<script>alert('Failed to enter marks');</script>";
     }
