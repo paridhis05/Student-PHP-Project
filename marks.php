@@ -1,6 +1,13 @@
 <?php
 include("connection.php");
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'PHPMailer/PHPMailer.php';
+require 'PHPMailer/SMTP.php';
+require 'PHPMailer/Exception.php';
+
 $students = mysqli_query($conn, "SELECT id, fname, lname FROM form");
 
 if (isset($_POST['submit'])) {
@@ -13,7 +20,7 @@ if (isset($_POST['submit'])) {
     $computer = $_POST['computer'];
 
     $total = $english + $hindi + $science + $math + $history + $computer;
-    $percentage = $total / 5;
+    $percentage = $total / 6;
 
     if ($percentage >= 90){ 
         $grade = 'A+';
@@ -41,7 +48,42 @@ if (isset($_POST['submit'])) {
     $run = mysqli_query($conn, $query);
 
     if ($run) {
-         echo "<script>alert('Marks Submitted! Grade: $grade " . ($reward ? "Reward: $reward" : "") . "');</script>";
+
+        if (!empty($reward)) {
+
+            $studentQuery = mysqli_query($conn, "SELECT email, fname FROM form WHERE id = '$student_id'");
+            $studentData = mysqli_fetch_assoc($studentQuery);
+            $studentEmail = $studentData['email'];
+            $studentName = $studentData['fname'];
+
+            $mail = new PHPMailer(true);
+
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'paridhis004@gmail.com'; // Sender email
+                $mail->Password = 'mcyz abfc ayrs uioo';    // Use App Password
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+
+                $mail->setFrom('paridhis004@gmail.com', 'Student Portal');
+                $mail->addAddress($studentEmail, $studentName);
+                $mail->isHTML(true);
+                $mail->Subject = "Congratulations $studentName!";
+                $mail->Body = "Dear $studentName,<br><br>
+                               You have achieved <strong>Grade: $grade</strong>.<br>
+                               You are awarded: <strong>$reward</strong>!<br><br>
+                               Regards,<br>Student Portal";
+
+                $mail->send();
+                echo "<script>alert('Marks submitted and reward email sent!');</script>";
+            } catch (Exception $e) {
+                echo "<script>alert('Marks saved, but email not sent.');</script>";
+            }
+        } else {
+            echo "<script>alert('Marks Submitted! Grade: $grade');</script>";
+        }
     } else {
         echo "<script>alert('Failed to enter marks');</script>";
     }
