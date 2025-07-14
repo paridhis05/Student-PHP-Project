@@ -59,7 +59,7 @@ session_start();
         if($total == 1){
             // echo "Login Successfully!";
             $_SESSION['user_name'] = $username;
-            echo "<meta http-equiv='refresh' content='0; url=table.php'>";
+            echo "<meta http-equiv='refresh' content='0; url=home.php'>";
         } else{
             echo "Login Failed!!";
         }
