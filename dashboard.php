@@ -2,14 +2,13 @@
 session_start();
 include 'connection.php';
 
-// Example: Assume student is already logged in and session has student_id
-$student_id = $_SESSION['student_id'] ?? 1; // fallback to 1 if not set
+$student_id = $_SESSION['student_id'] ?? 1; 
 
 // Fetch student details
 $student_query = mysqli_query($conn, "SELECT * FROM form WHERE id = $student_id");
 $student = mysqli_fetch_assoc($student_query);
 
-// Fetch payment status (assume there's a 'payments' table)
+// Fetch payment status
 $payment_query = mysqli_query($conn, "SELECT * FROM payments WHERE student_id = $student_id");
 $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
 ?>
@@ -19,11 +18,14 @@ $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="styleform.css">
+    <!-- <link rel="stylesheet" href="styleform.css"> -->
     <style>
+        body{
+            background-color: #04497a;
+        }
         .dashboard-container {
             max-width: 800px;
-            margin: auto;
+            margin: 50px;
             background: white;
             padding: 30px;
             border-radius: 10px;
@@ -61,12 +63,13 @@ $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
 <body>
     <div class="dashboard-container">
         <div class="info-section">
-            <h2>Welcome, <?php echo $student['name']; ?></h2>
-            <p><strong>Roll No:</strong> <?php echo $student['rollno']; ?></p>
-            <p><strong>Class:</strong> <?php echo $student['class']; ?></p>
+            <h2>Welcome, <?php echo $student['fname']; ?></h2>
+            <img id="photoPreview" src="uploads/<?= htmlspecialchars($student['photo']) ?>" alt="Student Photo" height="100px" style="margin: 20px; border: 1px solid #04497a;">
+            <p><strong>Student ID:</strong> <?php echo $student['id']; ?></p>
+            <p><strong>Email Address:</strong> <?php echo $student['email']; ?></p>
         </div>
 
-        <h3>📄 Payment History</h3>
+        <h3>Payment History</h3>
         <?php if ($payments): ?>
         <table>
             <tr>
@@ -90,8 +93,8 @@ $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
 
         <form action="payment.php" method="post">
             <input type="hidden" name="student_id" value="<?php echo $student_id; ?>">
-            <input type="hidden" name="amount" value="500"> <!-- Default fee -->
-            <button type="submit" class="pay-btn">💳 Pay Now</button>
+            <input type="hidden" name="amount" value="500">
+            <button type="submit" class="pay-btn">Pay Now</button>
         </form>
     </div>
 </body>
