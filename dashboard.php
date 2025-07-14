@@ -20,26 +20,28 @@ $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
     <title>Student Dashboard</title>
     <!-- <link rel="stylesheet" href="styleform.css"> -->
     <style>
-        body{
+        body {
             background-color: #04497a;
+            font-family: sans-serif;
         }
         .dashboard-container {
             max-width: 800px;
-            margin: 50px;
+            margin: 50px auto;
             background: white;
             padding: 30px;
             border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
         }
         .info-section {
             margin-bottom: 30px;
         }
         .info-section h2 {
-            margin-bottom: 10px;
             color: #04497a;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 15px;
         }
         table th, table td {
             border: 1px solid #aaa;
@@ -54,9 +56,14 @@ $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
             border: none;
             cursor: pointer;
             border-radius: 8px;
+            font-size: 16px;
         }
         .pay-btn:hover {
             background-color: darkgreen;
+        }
+        img {
+            border-radius: 15px;
+            border: 1px solid #04497a;
         }
     </style>
 </head>
@@ -64,7 +71,7 @@ $payments = mysqli_fetch_all($payment_query, MYSQLI_ASSOC);
     <div class="dashboard-container">
         <div class="info-section">
             <h2>Welcome, <?php echo $student['fname']; ?></h2>
-            <img id="photoPreview" src="uploads/<?= htmlspecialchars($student['photo']) ?>" alt="Student Photo" height="100px" style="margin: 20px; border: 1px solid #04497a;">
+            <img src="uploads/<?= htmlspecialchars($student['photo']) ?>" alt="Student Photo" height="100px">
             <p><strong>Student ID:</strong> <?php echo $student['id']; ?></p>
             <p><strong>Email Address:</strong> <?php echo $student['email']; ?></p>
         </div>
