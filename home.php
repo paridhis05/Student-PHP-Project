@@ -78,6 +78,7 @@
         <a href="home.php" class="nav-link">Home</a>
         <a href="form.php" class="nav-link">Register Student</a>
         <a href="table.php" class="nav-link">Student Records</a>
+        <a href="form.php" class="nav-link">Payment Dashboard</a>
         <a href="marks.php" class="nav-link">Enter Marks</a>
         <a href="logout.php" class="nav-link">Logout</a>
     </div>
