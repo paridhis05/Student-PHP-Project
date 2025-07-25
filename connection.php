@@ -4,7 +4,7 @@
     $servername = "localhost";
     $username = "root";
     $password = "";
-    $dbname = "registration_form2";
+    $dbname = "registration_form3";
 
     // To establish connection with database and html
     $conn = mysqli_connect($servername, $username, $password, $dbname);
